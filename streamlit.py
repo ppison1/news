@@ -38,6 +38,9 @@ def fetch_rss_articles(feed_url):
 
 # List of RSS feeds
 RSS_FEEDS = {
+    "Investing.com Più Rilenati": "https://it.investing.com/rss/news_285.rss",
+    "Investing.com Economia": "https://it.investing.com/rss/news_14.rss",
+    "Investing.com Mercato azionario": "https://it.investing.com/rss/news_25.rss",
     "Il sole 24 ore Italia": "https://www.ilsole24ore.com/rss/italia.xml",
     "Il sole 24 ore Mondo": "https://www.ilsole24ore.com/rss/mondo.xml",
     "Il sole 24 ore Economia": "https://www.ilsole24ore.com/rss/economia.xml",
@@ -72,4 +75,3 @@ for article in sorted_articles:
     st.write(article['description'])
     st.write(article['clean_link'])
     st.write("---")
-    
