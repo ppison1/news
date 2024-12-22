@@ -17,7 +17,10 @@ def fetch_rss_articles(feed_url):
             try:
                 title = item.find("title").text
                 link = item.find("link").text
-                description = item.find("description").text
+                try:
+                    description = item.find("description").text
+                except:
+                    description = ""
                 pub_date = item.find("pubDate").text
                 pub_date = dateutil.parser.parse(pub_date).astimezone(pytz.timezone('Europe/Rome'))
 
@@ -38,7 +41,7 @@ def fetch_rss_articles(feed_url):
 
 # List of RSS feeds
 RSS_FEEDS = {
-    "Investing.com Più Rilenati": "https://it.investing.com/rss/news_285.rss",
+    "Investing.com Più Rilevanti": "https://it.investing.com/rss/news_285.rss",
     "Investing.com Economia": "https://it.investing.com/rss/news_14.rss",
     "Investing.com Mercato azionario": "https://it.investing.com/rss/news_25.rss",
     "Il sole 24 ore Italia": "https://www.ilsole24ore.com/rss/italia.xml",
