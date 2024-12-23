@@ -63,18 +63,24 @@ RSS_FEEDS = {
 # Streamlit app layout
 st.title("RSS Feed Viewer")
 
-feed_name = st.sidebar.selectbox("Select an RSS Feed", list(RSS_FEEDS.keys()))
-feed_url = RSS_FEEDS[feed_name]
+# feed_name = st.sidebar.selectbox("Select an RSS Feed", list(RSS_FEEDS.keys()))
+feed_name = st.sidebar.radio(
+    "Select an RSS Feed",
+    list(RSS_FEEDS.keys()),
+    index=None,
+)
+if feed_name:
+    feed_url = RSS_FEEDS[feed_name]
 
-st.write(f"### Articles from {feed_name}")
+    st.write(f"### Articles from {feed_name}")
 
-# Fetch and display articles
-articles = fetch_rss_articles(feed_url)
-sorted_articles = sorted(articles, key=lambda x: x['pub_date'], reverse=True)
+    # Fetch and display articles
+    articles = fetch_rss_articles(feed_url)
+    sorted_articles = sorted(articles, key=lambda x: x['pub_date'], reverse=True)
 
-for article in sorted_articles:
-    st.write(f"#### [{article['title']}]({article['link']})")
-    st.write(f"Published on: {article['pub_date']}")
-    st.write(article['description'])
-    st.write(article['clean_link'])
-    st.write("---")
+    for article in sorted_articles:
+        st.write(f"#### [{article['title']}]({article['link']})")
+        st.write(f"Published on: {article['pub_date']}")
+        st.write(article['description'])
+        st.write(article['clean_link'])
+        st.write("---")
