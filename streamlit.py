@@ -41,6 +41,7 @@ def fetch_rss_articles(feed_url):
 
 # List of RSS feeds
 RSS_FEEDS = {
+    "Calendario economico": None,
     "Investing.com Più Rilevanti": "https://it.investing.com/rss/news_285.rss",
     "Investing.com Economia": "https://it.investing.com/rss/news_14.rss",
     "Investing.com Mercato azionario": "https://it.investing.com/rss/news_25.rss",
@@ -70,17 +71,31 @@ feed_name = st.sidebar.radio(
     index=None,
 )
 if feed_name:
-    feed_url = RSS_FEEDS[feed_name]
+    if feed_name == "Calendario economico":
+        st.write("### Economic Calendar")
+        st.components.v1.html("""
+            <iframe src="https://sslecal2.investing.com?columns=exc_flags,exc_currency,exc_importance,exc_actual,exc_forecast,exc_previous&category=_employment,_economicActivity,_inflation,_credit,_centralBanks,_confidenceIndex,_balance,_Bonds&importance=2,3&features=datepicker,timezone&countries=5&calType=day&timeZone=16&lang=9" width="650" height="467" frameborder="0" allowtransparency="true" marginwidth="0" marginheight="0"></iframe>
+            <div class="poweredBy" style="font-family: Arial, Helvetica, sans-serif;">
+                <span style="font-size: 11px;color: #333333;text-decoration: none;">
+                    Calendario economico fornito da 
+                    <a href="https://it.investing.com/" rel="nofollow" target="_blank" style="font-size: 11px;color: #06529D; font-weight: bold;" class="underline_link">Investing.com Italia</a> 
+                    - Il Portale di Trading sul Forex e sui titoli di borsa.
+                </span>
+            </div>
+        """, height=500)
 
-    st.write(f"### Articles from {feed_name}")
+    else:
+        feed_url = RSS_FEEDS[feed_name]
 
-    # Fetch and display articles
-    articles = fetch_rss_articles(feed_url)
-    sorted_articles = sorted(articles, key=lambda x: x['pub_date'], reverse=True)
+        st.write(f"### Articles from {feed_name}")
 
-    for article in sorted_articles:
-        st.write(f"#### [{article['title']}]({article['link']})")
-        st.write(f"Published on: {article['pub_date']}")
-        st.write(article['description'])
-        st.write(article['clean_link'])
-        st.write("---")
+        # Fetch and display articles
+        articles = fetch_rss_articles(feed_url)
+        sorted_articles = sorted(articles, key=lambda x: x['pub_date'], reverse=True)
+
+        for article in sorted_articles:
+            st.write(f"#### [{article['title']}]({article['link']})")
+            st.write(f"Published on: {article['pub_date']}")
+            st.write(article['description'])
+            st.write(article['clean_link'])
+            st.write("---")
