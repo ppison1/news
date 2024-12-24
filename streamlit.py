@@ -94,8 +94,19 @@ if feed_name:
         sorted_articles = sorted(articles, key=lambda x: x['pub_date'], reverse=True)
 
         for article in sorted_articles:
-            st.write(f"#### [{article['title']}]({article['link']})")
-            st.write(f"Published on: {article['pub_date']}")
-            st.write(article['description'])
-            st.write(article['clean_link'])
+            col1, col2 = st.columns([10, 1])
+            with col1:
+                st.write(f"#### [{article['title']}]({article['link']})")
+                st.write(f"Published on: {article['pub_date']}")
+                st.write(article['description'])
+                # st.write(article['clean_link'])
+            with col2:
+                copy_button_html = f"""
+                <button onclick="navigator.clipboard.writeText('{article['link']}')">Link</button>
+                """
+                copy_button_html2 = f"""
+                <button onclick="navigator.clipboard.writeText('{article['clean_link']}')">12ft</button>
+                """
+                st.components.v1.html(copy_button_html, height=35)
+                st.components.v1.html(copy_button_html2, height=35)
             st.write("---")
