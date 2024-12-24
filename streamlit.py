@@ -102,10 +102,10 @@ if feed_name:
                 # st.write(article['clean_link'])
             with col2:
                 copy_button_html = f"""
-                <button onclick="navigator.clipboard.writeText('{article['link']}')">Link</button>
+                <button onclick="navigator.clipboard.writeText('Riassumi in italiano {article['link']}')">Link</button>
                 """
                 copy_button_html2 = f"""
-                <button onclick="navigator.clipboard.writeText('{article['clean_link']}')">12ft</button>
+                <button onclick="navigator.clipboard.writeText('Riassumi in italiano {article['clean_link']}')">12ft</button>
                 """
                 st.components.v1.html(copy_button_html, height=35)
                 st.components.v1.html(copy_button_html2, height=35)
