@@ -51,7 +51,7 @@ RSS_FEEDS = {
     "Il sole 24 ore Finanza": "https://www.ilsole24ore.com/rss/finanza.xml",
     # "Corriere Esteri": "https://www.corriere.it/dynamic-feed/rss/section/Esteri.xml",
     # "Corriere Economia": "https://www.corriere.it/dynamic-feed/rss/section/Economia.xml",
-    "Corriere Scienza": "https://www.corriere.it/dynamic-feed/rss/section/Scienza.xml",
+    # "Corriere Scienza": "https://www.corriere.it/dynamic-feed/rss/section/Scienza.xml",
     "Corriere Motori": "https://xml2.corriereobjects.it/rss/motori.xml",
     "Corriere Milano": "https://www.corriere.it/dynamic-feed/rss/section/Milano.xml",
     "F1": "https://it.motorsport.com/rss/f1/news/",
