@@ -101,12 +101,13 @@ if feed_name:
                 st.write(article['description'])
                 # st.write(article['clean_link'])
             with col2:
-                copy_button_html = f"""
-                <button onclick="navigator.clipboard.writeText('Riassumi in italiano {article['link']}')">Link</button>
-                """
-                copy_button_html2 = f"""
-                <button onclick="navigator.clipboard.writeText('Riassumi in italiano {article['clean_link']}')">12ft</button>
-                """
+                if "ilsole24ore" in feed_name.replace(" ", "").lower() or "corriere" in feed_name.replace(" ", "").lower():
+                    copy_button_html = f"""
+                    <button onclick="navigator.clipboard.writeText('Riassumi in italiano {article['clean_link']}')">Copy</button>
+                    """
+                else:
+                    copy_button_html = f"""
+                    <button onclick="navigator.clipboard.writeText('Riassumi in italiano {article['link']}')">Copy</button>
+                    """
                 st.components.v1.html(copy_button_html, height=35)
-                st.components.v1.html(copy_button_html2, height=35)
             st.write("---")
