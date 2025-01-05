@@ -11,6 +11,7 @@ import google.generativeai as genai
 user = st.secrets["user"]
 passwd = st.secrets["password"]
 g_id = st.secrets["g_id"]
+timeout = int(st.secrets["timeout"])
 
 # List of RSS feeds
 RSS_FEEDS = {
@@ -52,7 +53,7 @@ def login():
 def check_inactivity():
     if "last_activity" in st.session_state:
         now = datetime.now()
-        if now - st.session_state["last_activity"] > timedelta(minutes=5):
+        if now - st.session_state["last_activity"] > timedelta(minutes=timeout):
             st.session_state["authenticated"] = False
             st.sidebar.warning("You have been logged out due to inactivity.")
     st.session_state["last_activity"] = datetime.now()
