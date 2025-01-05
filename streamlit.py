@@ -5,10 +5,12 @@ from bs4 import BeautifulSoup
 import dateutil.parser
 from datetime import datetime, timedelta
 import pytz
+import google.generativeai as genai
 
 
 user = st.secrets["user"]
 passwd = st.secrets["password"]
+g_id = st.secrets["g_id"]
 
 # List of RSS feeds
 RSS_FEEDS = {
@@ -91,6 +93,32 @@ def fetch_rss_articles(feed_url):
     return articles
 
 
+# Function to process the link
+def process_link(link):
+    # Replace this with your actual processing logic
+    genai.configure(api_key=g_id)
+    # Create the model
+    generation_config = {
+        "temperature": 1,
+        "top_p": 0.95,
+        "top_k": 40,
+        "max_output_tokens": 8192,
+        "response_mime_type": "text/plain",
+    }
+
+    model = genai.GenerativeModel(
+        model_name="gemini-2.0-flash-exp",
+        generation_config=generation_config,
+    )
+
+    chat_session = model.start_chat(
+        history=[
+        ]
+    )
+    response = chat_session.send_message(f"Riassumi in italiano {link}")
+    return response.text
+
+
 # Check login status
 if "authenticated" not in st.session_state or not st.session_state["authenticated"]:
     login()
@@ -143,14 +171,12 @@ else:
                     st.write(f"Published on: {article['pub_date']}")
                     st.write(article['description'])
                     # st.write(article['clean_link'])
+                    output_placeholder = st.empty()
                 with col2:
-                    if "ilsole24ore" in feed_name.replace(" ", "").lower() or "corriere" in feed_name.replace(" ", "").lower():
-                        copy_button_html = f"""
-                        <button onclick="navigator.clipboard.writeText('Riassumi in italiano {article['clean_link']}')">Copy</button>
-                        """
-                    else:
-                        copy_button_html = f"""
-                        <button onclick="navigator.clipboard.writeText('Riassumi in italiano {article['link']}')">Copy</button>
-                        """
-                    st.components.v1.html(copy_button_html, height=35)
+                    if st.button(f"AI", key=article['link']):
+                        if "ilsole24ore" in feed_name.replace(" ", "").lower() or "corriere" in feed_name.replace(" ", "").lower():
+                            output = process_link(article['clean_link'])
+                        else:
+                            output = process_link(article['link'])
+                        output_placeholder.write(f"{output}")
                 st.write("---")
