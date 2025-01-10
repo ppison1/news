@@ -153,7 +153,7 @@ else:
     )
 
     if feed_name:
-        if feed_name == "Calendario economico":
+        if feed_name == "Calendario":
             st.write("### Economic Calendar")
             st.components.v1.html("""
                 <iframe src="https://sslecal2.investing.com?columns=exc_flags,exc_currency,exc_importance,exc_actual,exc_forecast,exc_previous&category=_employment,_economicActivity,_inflation,_credit,_centralBanks,_confidenceIndex,_balance,_Bonds&importance=2,3&features=datepicker,timezone&countries=5&calType=day&timeZone=16&lang=9" width="650" height="467" frameborder="0" allowtransparency="true" marginwidth="0" marginheight="0"></iframe>
