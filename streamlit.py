@@ -155,17 +155,7 @@ else:
     if feed_name:
         if feed_name == "Calendario":
             st.write("### Economic Calendar")
-            st.components.v1.html("""
-                <iframe src="https://sslecal2.investing.com?columns=exc_flags,exc_currency,exc_importance,exc_actual,exc_forecast,exc_previous&category=_employment,_economicActivity,_inflation,_credit,_centralBanks,_confidenceIndex,_balance,_Bonds&importance=2,3&features=datepicker,timezone&countries=5&calType=day&timeZone=16&lang=9" width="650" height="467" frameborder="0" allowtransparency="true" marginwidth="0" marginheight="0"></iframe>
-                <div class="poweredBy" style="font-family: Arial, Helvetica, sans-serif;">
-                    <span style="font-size: 11px;color: #333333;text-decoration: none;">
-                        Calendario economico fornito da 
-                        <a href="https://it.investing.com/" rel="nofollow" target="_blank" style="font-size: 11px;color: #06529D; font-weight: bold;" class="underline_link">Investing.com Italia</a> 
-                        - Il Portale di Trading sul Forex e sui titoli di borsa.
-                    </span>
-                </div>
-            """, height=500)
-
+            st.components.v1.html("""<iframe src="https://sslecal2.investing.com?columns=exc_flags,exc_currency,exc_importance,exc_actual,exc_forecast,exc_previous&category=_employment,_economicActivity,_inflation,_credit,_centralBanks,_confidenceIndex,_balance,_Bonds&importance=2,3&features=datepicker,timezone,timeselector,filters&countries=5&calType=week&timeZone=16&lang=9" width="650" height="467" frameborder="0" allowtransparency="true" marginwidth="0" marginheight="0"></iframe><div class="poweredBy" style="font-family: Arial, Helvetica, sans-serif;"><span style="font-size: 11px;color: #333333;text-decoration: none;">Calendario economico fornito da <a href="https://it.investing.com/" rel="nofollow" target="_blank" style="font-size: 11px;color: #06529D; font-weight: bold;" class="underline_link">Investing.com Italia</a> - Il Portale di Trading sul Forex e sui titoli di borsa.</span></div>""", height=600)
         else:
             feed_urls = RSS_FEEDS[feed_name]
 
@@ -175,19 +165,25 @@ else:
             articles = fetch_rss_articles(feed_urls)
             sorted_articles = sorted(articles, key=lambda x: x['pub_date'], reverse=True)
 
-            for article in sorted_articles:
+            for idx, article in enumerate(sorted_articles):
                 col1, col2 = st.columns([10, 1])
+                article_key = f"output_{article['title']}"  # Unique key for each article
                 with col1:
                     st.write(f"#### [{article['title']}]({article['link']})")
                     st.write(f"Published on: {article['pub_date']}")
                     st.write(article['description'])
-                    # st.write(article['clean_link'])
+                    if article_key not in st.session_state:
+                        st.session_state[article_key] = ""  # Initialize state
                     output_placeholder = st.empty()
+                    output_placeholder.write(f"{st.session_state[article_key]}")
+
                 with col2:
                     if st.button(f"AI", key=article['link']):
                         if "ilsole24ore" in article['link'] or "corriere" in article['link']:
                             output = process_link(article['clean_link'])
                         else:
                             output = process_link(article['link'])
+                        st.session_state[article_key] = output
                         output_placeholder.write(f"{output}")
+
                 st.write("---")
