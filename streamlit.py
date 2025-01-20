@@ -171,7 +171,7 @@ else:
                 with col1:
                     st.write(f"#### [{article['title']}]({article['link']})")
                     st.write(f"Published on: {article['pub_date']}")
-                    st.write(article['description'])
+                    # st.write(article['description'])
                     if article_key not in st.session_state:
                         st.session_state[article_key] = ""  # Initialize state
                     output_placeholder = st.empty()
