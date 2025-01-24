@@ -13,27 +13,7 @@ passwd = st.secrets["password"]
 g_id = st.secrets["g_id"]
 timeout = int(st.secrets["timeout"])
 
-# List of RSS feeds
-# RSS_FEEDS = {
-#     "Calendario economico": None,
-#     "Investing.com Più Rilevanti": "https://it.investing.com/rss/news_285.rss",
-#     "Investing.com Economia": "https://it.investing.com/rss/news_14.rss",
-#     "Investing.com Mercato azionario": "https://it.investing.com/rss/news_25.rss",
-#     "Il sole 24 ore Italia": "https://www.ilsole24ore.com/rss/italia.xml",
-#     "Il sole 24 ore Mondo": "https://www.ilsole24ore.com/rss/mondo.xml",
-#     "Il sole 24 ore Economia": "https://www.ilsole24ore.com/rss/economia.xml",
-#     "Il sole 24 ore Finanza": "https://www.ilsole24ore.com/rss/finanza.xml",
-#     # "Corriere Esteri": "https://www.corriere.it/dynamic-feed/rss/section/Esteri.xml",
-#     # "Corriere Economia": "https://www.corriere.it/dynamic-feed/rss/section/Economia.xml",
-#     # "Corriere Scienza": "https://www.corriere.it/dynamic-feed/rss/section/Scienza.xml",
-#     "Corriere Motori": "https://xml2.corriereobjects.it/rss/motori.xml",
-#     "Corriere Milano": "https://www.corriere.it/dynamic-feed/rss/section/Milano.xml",
-#     "F1": "https://it.motorsport.com/rss/f1/news/",
-#     "MotoGP": "https://www.moto.it/rss/news-motogp.xml",
-#     "Focus Tecnologia": "https://www.focus.it/rss/tecnologia.rss",
-#     "Focus Comportamento": "https://www.focus.it/rss/comportamento.rss",
-#     "Focus Scienza": "https://www.focus.it/rss/scienza.rss",
-# }
+
 RSS_FEEDS = {
     "Calendario": None,
     "Mondo": ["https://it.investing.com/rss/news_285.rss", "https://www.ilsole24ore.com/rss/mondo.xml"],
@@ -166,24 +146,27 @@ else:
             sorted_articles = sorted(articles, key=lambda x: x['pub_date'], reverse=True)
 
             for idx, article in enumerate(sorted_articles):
-                col1, col2 = st.columns([10, 1])
-                article_key = f"output_{article['title']}"  # Unique key for each article
-                with col1:
-                    st.write(f"#### [{article['title']}]({article['link']})")
-                    st.write(f"Published on: {article['pub_date']}")
-                    # st.write(article['description'])
-                    if article_key not in st.session_state:
-                        st.session_state[article_key] = ""  # Initialize state
-                    output_placeholder = st.empty()
-                    output_placeholder.write(f"{st.session_state[article_key]}")
+                try:
+                    col1, col2 = st.columns([10, 1])
+                    article_key = f"output_{article['title']}"  # Unique key for each article
+                    with col1:
+                        st.write(f"#### [{article['title']}]({article['link']})")
+                        st.write(f"Published on: {article['pub_date']}")
+                        # st.write(article['description'])
+                        if article_key not in st.session_state:
+                            st.session_state[article_key] = ""  # Initialize state
+                        output_placeholder = st.empty()
+                        output_placeholder.write(f"{st.session_state[article_key]}")
 
-                with col2:
-                    if st.button(f"AI", key=article['link']):
-                        if "ilsole24ore" in article['link'] or "corriere" in article['link']:
-                            output = process_link(article['clean_link'])
-                        else:
-                            output = process_link(article['link'])
-                        st.session_state[article_key] = output
-                        output_placeholder.write(f"{output}")
+                    with col2:
+                        if st.button(f"AI", key=article['link']):
+                            if "ilsole24ore" in article['link'] or "corriere" in article['link']:
+                                output = process_link(article['clean_link'])
+                            else:
+                                output = process_link(article['link'])
+                            st.session_state[article_key] = output
+                            output_placeholder.write(f"{output}")
 
-                st.write("---")
+                    st.write("---")
+                except Exception as e:
+                    pass
