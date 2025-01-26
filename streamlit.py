@@ -147,7 +147,7 @@ def process_image(image):
     ]
     )
 
-    response = chat_session.send_message("riesci a darmi i prezzi chiave di questo grafico. almeno 10")
+    response = chat_session.send_message("riesci a darmi i prezzi chiave di questo grafico. almeno 20")
     return response.text
     
 
@@ -217,7 +217,8 @@ else:
             )
             # Display in Streamlit
             st.plotly_chart(fig)
-            st.write(f"#### {process_image(fig.to_image(format="png"))}")
+            if len(df) > 0:
+                st.write(f"#### {process_image(fig.to_image(format="png"))}")
         else:
             feed_urls = RSS_FEEDS[feed_name]
 
