@@ -6,6 +6,10 @@ import dateutil.parser
 from datetime import datetime, timedelta
 import pytz
 import google.generativeai as genai
+from tvDatafeed import TvDatafeed, Interval
+import pandas as pd
+import plotly.graph_objects as go
+import io
 
 
 user = st.secrets["user"]
@@ -15,6 +19,7 @@ timeout = int(st.secrets["timeout"])
 
 
 RSS_FEEDS = {
+    "Chart": None,
     "Calendario": None,
     "Mondo": ["https://it.investing.com/rss/news_285.rss", "https://www.ilsole24ore.com/rss/mondo.xml"],
     "Economia": ["https://it.investing.com/rss/news_14.rss", "https://www.ilsole24ore.com/rss/economia.xml"],
@@ -110,6 +115,42 @@ def process_link(link):
     return response.text
 
 
+def process_image(image):
+    def upload_to_gemini(image, mime_type="image/png"):
+        file = genai.upload_file(io.BytesIO(image), mime_type=mime_type)
+        return file
+    
+    genai.configure(api_key=g_id)
+    generation_config = {
+        "temperature": 1,
+        "top_p": 0.95,
+        "top_k": 40,
+        "max_output_tokens": 8192,
+        "response_mime_type": "text/plain",
+    }
+
+    model = genai.GenerativeModel(
+        model_name="gemini-2.0-flash-exp",
+        generation_config=generation_config,
+    )
+    files = [
+        upload_to_gemini(image, mime_type="image/png"),
+    ]
+    chat_session = model.start_chat(
+    history=[
+        {
+        "role": "user",
+        "parts": [
+            files[0],
+        ],
+        },
+    ]
+    )
+
+    response = chat_session.send_message("riesci a darmi i prezzi chiave di questo grafico. almeno 10")
+    return response.text
+    
+
 # Check login status
 if "authenticated" not in st.session_state or not st.session_state["authenticated"]:
     login()
@@ -136,6 +177,47 @@ else:
         if feed_name == "Calendario":
             st.write("### Economic Calendar")
             st.components.v1.html("""<iframe src="https://sslecal2.investing.com?columns&category=_employment,_economicActivity,_inflation,_credit,_centralBanks,_confidenceIndex,_balance,_Bonds&importance=2,3&features=timeselector&countries=5&calType=week&timeZone=16&lang=9" width="450" height="467" frameborder="0" allowtransparency="true" marginwidth="0" marginheight="0"></iframe><div class="poweredBy" style="font-family: Arial, Helvetica, sans-serif;"><span style="font-size: 11px;color: #333333;text-decoration: none;">Calendario economico fornito da <a href="https://it.investing.com/" rel="nofollow" target="_blank" style="font-size: 11px;color: #06529D; font-weight: bold;" class="underline_link">Investing.com Italia</a> - Il Portale di Trading sul Forex e sui titoli di borsa.</span></div>""", height=600)
+        elif feed_name == "Chart":
+            st.write("### Charts")
+            tv = TvDatafeed()
+            df = tv.get_hist(symbol='NQH2025',exchange='CME_MINI',interval=Interval.in_1_minute, n_bars=5000)
+            df['datetime_ny'] = pd.to_datetime(df.index).tz_localize('Etc/GMT-1')  # UTC+1 timezone
+            df['datetime_ny'] = df['datetime_ny'].dt.tz_convert('America/New_York')
+            
+            selected_dates = st.date_input("Select dates", None)
+            dates_to_filter = pd.to_datetime([selected_dates]).date
+
+            df = df[
+                (df.datetime_ny.dt.time >= pd.Timestamp('09:30:00').time()) & 
+                (df.datetime_ny.dt.time < pd.Timestamp('16:00:00').time()) &
+                (df.datetime_ny.dt.date.isin(dates_to_filter))
+            ]
+            fig = go.Figure()
+            fig.add_trace(go.Candlestick(
+                x=df['datetime_ny'],
+                open=df['open'],
+                high=df['high'],
+                low=df['low'],
+                close=df['close'],
+                name="Candlestick"
+            ))
+            # Update layout for better visuals
+            fig.update_layout(
+                title="Stock Prices Over Time",
+                xaxis_title="Date",
+                yaxis_title="Price",
+                xaxis_rangeslider_visible=False,
+                yaxis=dict(
+                    tickformat='.0f',
+                    showgrid=True,
+                    gridcolor='lightgray',
+                    gridwidth=0,
+                    dtick=10 
+                )
+            )
+            # Display in Streamlit
+            st.plotly_chart(fig)
+            st.write(f"#### {process_image(fig.to_image(format="png"))}")
         else:
             feed_urls = RSS_FEEDS[feed_name]
 
