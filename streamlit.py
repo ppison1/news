@@ -17,6 +17,7 @@ passwd = st.secrets["password"]
 g_id = st.secrets["g_id"]
 timeout = int(st.secrets["timeout"])
 
+tv = TvDatafeed()
 
 RSS_FEEDS = {
     "Chart": None,
@@ -179,7 +180,6 @@ else:
             st.components.v1.html("""<iframe src="https://sslecal2.investing.com?columns&category=_employment,_economicActivity,_inflation,_credit,_centralBanks,_confidenceIndex,_balance,_Bonds&importance=2,3&features=timeselector&countries=5&calType=week&timeZone=16&lang=9" width="450" height="467" frameborder="0" allowtransparency="true" marginwidth="0" marginheight="0"></iframe><div class="poweredBy" style="font-family: Arial, Helvetica, sans-serif;"><span style="font-size: 11px;color: #333333;text-decoration: none;">Calendario economico fornito da <a href="https://it.investing.com/" rel="nofollow" target="_blank" style="font-size: 11px;color: #06529D; font-weight: bold;" class="underline_link">Investing.com Italia</a> - Il Portale di Trading sul Forex e sui titoli di borsa.</span></div>""", height=600)
         elif feed_name == "Chart":
             st.write("### Charts")
-            tv = TvDatafeed()
             df = tv.get_hist(symbol='NQH2025',exchange='CME_MINI',interval=Interval.in_1_minute, n_bars=5000)
             df['datetime_ny'] = pd.to_datetime(df.index).tz_localize('Etc/GMT-1')  # UTC+1 timezone
             df['datetime_ny'] = df['datetime_ny'].dt.tz_convert('America/New_York')
