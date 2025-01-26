@@ -3,3 +3,4 @@ google-generativeai
 git+https://github.com/rongardF/tvdatafeed.git
 pandas
 plotly
+kaleido
