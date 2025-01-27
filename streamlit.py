@@ -148,7 +148,7 @@ def process_image(image):
     ]
     )
 
-    response = chat_session.send_message("riesci a darmi i prezzi chiave di questo grafico. almeno 20")
+    response = chat_session.send_message("riesci a darmi i prezzi chiave di questo grafico.")
     return response.text
     
 
