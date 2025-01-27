@@ -181,7 +181,7 @@ else:
         elif feed_name == "Chart":
             st.write("### Charts")
             df = tv.get_hist(symbol='NQH2025',exchange='CME_MINI',interval=Interval.in_1_minute, n_bars=5000)
-            df['datetime_ny'] = pd.to_datetime(df.index).tz_localize('Etc/GMT-1')  # UTC+1 timezone
+            df['datetime_ny'] = pd.to_datetime(df.index).tz_localize('Etc/GMT')
             df['datetime_ny'] = df['datetime_ny'].dt.tz_convert('America/New_York')
             
             selected_dates = st.date_input("Select dates", None)
