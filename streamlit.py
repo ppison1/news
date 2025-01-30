@@ -171,7 +171,7 @@ else:
     feed_name = st.sidebar.radio(
         "Select an RSS Feed",
         list(RSS_FEEDS.keys()),
-        index=1,
+        index=2,
     )
 
     if feed_name:
@@ -233,14 +233,14 @@ else:
                     col1, col2 = st.columns([10, 1])
                     article_key = f"output_{article['title']}"  # Unique key for each article
                     with col1:
-                        st.write(f"#### [{article['title']}]({article['link']})")
+                        st.write(f"[{article['title']}]({article['link']})")
                         st.write(f"Published on: {article['pub_date']}")
                         # st.write(article['description'])
                         if article_key not in st.session_state:
                             st.session_state[article_key] = ""  # Initialize state
                         output_placeholder = st.empty()
                         output_placeholder.write(f"{st.session_state[article_key]}")
-
+                        
                     with col2:
                         if st.button(f"AI", key=article['link']):
                             if "ilsole24ore" in article['link'] or "corriere" in article['link']:
@@ -250,6 +250,6 @@ else:
                             st.session_state[article_key] = output
                             output_placeholder.write(f"{output}")
 
-                    st.write("---")
+                    # st.write("---")
                 except Exception as e:
                     pass
