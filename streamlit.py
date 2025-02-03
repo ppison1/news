@@ -232,26 +232,36 @@ else:
 
             for idx, article in enumerate(sorted_articles):
                 try:
-                    col1, col2 = st.columns([10, 1])
-                    article_key = f"output_{article['title']}"  # Unique key for each article
-                    with col1:
+                    if "ilsole24ore" in article['link'] or "corriere" in article['link']:
+                        st.write(f"[{article['title']}]({article['clean_link']})")
+                    else:
                         st.write(f"[{article['title']}]({article['link']})")
-                        st.write(f"Published on: {article['pub_date']}")
-                        # st.write(article['description'])
-                        if article_key not in st.session_state:
-                            st.session_state[article_key] = ""  # Initialize state
-                        output_placeholder = st.empty()
-                        output_placeholder.write(f"{st.session_state[article_key]}")
-                        
-                    with col2:
-                        if st.button(f"AI", key=article['link']):
-                            # if "ilsole24ore" in article['link'] or "corriere" in article['link']:
-                            #     output = process_link(article['clean_link'])
-                            # else:
-                            output = process_link(article['link'])
-                            st.session_state[article_key] = output
-                            output_placeholder.write(f"{output}")
-
-                    # st.write("---")
+                    st.write(f"Published on: {article['pub_date']}")
                 except Exception as e:
                     pass
+
+            # for idx, article in enumerate(sorted_articles):
+            #     try:
+            #         col1, col2 = st.columns([10, 1])
+            #         article_key = f"output_{article['title']}"  # Unique key for each article
+            #         with col1:
+            #             st.write(f"[{article['title']}]({article['link']})")
+            #             st.write(f"Published on: {article['pub_date']}")
+            #             # st.write(article['description'])
+            #             if article_key not in st.session_state:
+            #                 st.session_state[article_key] = ""  # Initialize state
+            #             output_placeholder = st.empty()
+            #             output_placeholder.write(f"{st.session_state[article_key]}")
+                        
+            #         with col2:
+            #             if st.button(f"AI", key=article['link']):
+            #                 # if "ilsole24ore" in article['link'] or "corriere" in article['link']:
+            #                 #     output = process_link(article['clean_link'])
+            #                 # else:
+            #                 output = process_link(article['link'])
+            #                 st.session_state[article_key] = output
+            #                 output_placeholder.write(f"{output}")
+
+            #         # st.write("---")
+            #     except Exception as e:
+            #         pass
