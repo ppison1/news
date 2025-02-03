@@ -4,3 +4,5 @@ git+https://github.com/rongardF/tvdatafeed.git
 pandas
 plotly
 kaleido
+lxml_html_clean
+newspaper3k
