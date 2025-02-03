@@ -10,7 +10,6 @@ from tvDatafeed import TvDatafeed, Interval
 import pandas as pd
 import plotly.graph_objects as go
 import io
-from newspaper import Article
 
 
 user = st.secrets["user"]
@@ -91,11 +90,9 @@ def fetch_rss_articles(feed_urls):
 
 # Function to process the link
 def process_link(link):
-    article = Article(link)
-    article.download()
-    article.parse()
-
+    # Replace this with your actual processing logic
     genai.configure(api_key=g_id)
+    # Create the model
     generation_config = {
         "temperature": 1,
         "top_p": 0.95,
@@ -113,7 +110,7 @@ def process_link(link):
         history=[
         ]
     )
-    response = chat_session.send_message(f"riassumi questo testo: {article.text}")
+    response = chat_session.send_message(f"Riassumi in italiano {link}")
     return response.text
 
 
@@ -232,36 +229,26 @@ else:
 
             for idx, article in enumerate(sorted_articles):
                 try:
-                    if "ilsole24ore" in article['link'] or "corriere" in article['link']:
-                        st.write(f"[{article['title']}]({article['clean_link']})")
-                    else:
+                    col1, col2 = st.columns([10, 1])
+                    article_key = f"output_{article['title']}"  # Unique key for each article
+                    with col1:
                         st.write(f"[{article['title']}]({article['link']})")
-                    st.write(f"Published on: {article['pub_date']}")
+                        st.write(f"Published on: {article['pub_date']}")
+                        # st.write(article['description'])
+                        if article_key not in st.session_state:
+                            st.session_state[article_key] = ""  # Initialize state
+                        output_placeholder = st.empty()
+                        output_placeholder.write(f"{st.session_state[article_key]}")
+                        
+                    with col2:
+                        if st.button(f"AI", key=article['link']):
+                            if "ilsole24ore" in article['link'] or "corriere" in article['link']:
+                                output = process_link(article['clean_link'])
+                            else:
+                                output = process_link(article['link'])
+                            st.session_state[article_key] = output
+                            output_placeholder.write(f"{output}")
+
+                    # st.write("---")
                 except Exception as e:
                     pass
-
-            # for idx, article in enumerate(sorted_articles):
-            #     try:
-            #         col1, col2 = st.columns([10, 1])
-            #         article_key = f"output_{article['title']}"  # Unique key for each article
-            #         with col1:
-            #             st.write(f"[{article['title']}]({article['link']})")
-            #             st.write(f"Published on: {article['pub_date']}")
-            #             # st.write(article['description'])
-            #             if article_key not in st.session_state:
-            #                 st.session_state[article_key] = ""  # Initialize state
-            #             output_placeholder = st.empty()
-            #             output_placeholder.write(f"{st.session_state[article_key]}")
-                        
-            #         with col2:
-            #             if st.button(f"AI", key=article['link']):
-            #                 # if "ilsole24ore" in article['link'] or "corriere" in article['link']:
-            #                 #     output = process_link(article['clean_link'])
-            #                 # else:
-            #                 output = process_link(article['link'])
-            #                 st.session_state[article_key] = output
-            #                 output_placeholder.write(f"{output}")
-
-            #         # st.write("---")
-            #     except Exception as e:
-            #         pass
