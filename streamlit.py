@@ -232,7 +232,10 @@ else:
                     col1, col2 = st.columns([10, 1])
                     article_key = f"output_{article['title']}"  # Unique key for each article
                     with col1:
-                        st.write(f"[{article['title']}]({article['link']})")
+                        if "ilsole24ore" in article['link'] or "corriere" in article['link']:
+                            st.write(f"[{article['title']}]({article['clean_link']})")
+                        else:
+                            st.write(f"[{article['title']}]({article['link']})")
                         st.write(f"Published on: {article['pub_date']}")
                         # st.write(article['description'])
                         if article_key not in st.session_state:
