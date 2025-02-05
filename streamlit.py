@@ -10,6 +10,7 @@ from tvDatafeed import TvDatafeed, Interval
 import pandas as pd
 import plotly.graph_objects as go
 import io
+import pyperclip
 
 
 user = st.secrets["user"]
@@ -244,13 +245,15 @@ else:
                         output_placeholder.write(f"{st.session_state[article_key]}")
                         
                     with col2:
-                        if st.button(f"AI", key=article['link']):
-                            if "ilsole24ore" in article['link'] or "corriere" in article['link']:
-                                output = process_link(article['clean_link'])
-                            else:
-                                output = process_link(article['link'])
-                            st.session_state[article_key] = output
-                            output_placeholder.write(f"{output}")
+                        if st.button(f"CP", key=article['title']):  # Usa un'icona per il pulsante
+                            pyperclip.copy(article['title'])  # Copia il titolo dell'articolo
+                        # if st.button(f"AI", key=article['link']):
+                        #     if "ilsole24ore" in article['link'] or "corriere" in article['link']:
+                        #         output = process_link(article['clean_link'])
+                        #     else:
+                        #         output = process_link(article['link'])
+                        #     st.session_state[article_key] = output
+                        #     output_placeholder.write(f"{output}")
 
                     # st.write("---")
                 except Exception as e:
