@@ -229,7 +229,7 @@ else:
                 try:
                     col1, col2 = st.columns([10, 1])  # Colonne modificate per spazio
                     with col1:
-                        st.write(f"**{article['title']}**")
+                        st.write(f"<span style='color:#1f77b4; font-size: 20px; font-weight: bold;'>{article['title']}</span>", unsafe_allow_html=True)
                         st.write(f"Published on: {article['pub_date']}")
                     with col2:
                         copy_button_html = f"""
