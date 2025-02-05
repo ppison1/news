@@ -6,3 +6,4 @@ plotly
 kaleido
 lxml_html_clean
 newspaper3k
+pyperclip
