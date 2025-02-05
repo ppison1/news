@@ -222,13 +222,19 @@ else:
 
             st.write(f"### Articles from {feed_name}")
 
-            # Fetch and display articles
             articles = fetch_rss_articles(feed_urls)
             sorted_articles = sorted(articles, key=lambda x: x['pub_date'], reverse=True)
 
             for idx, article in enumerate(sorted_articles):
                 try:
-                    st.write(f"**{article['title']}**")
+                    col1, col2 = st.columns([10, 1])  # Colonne modificate per spazio
+                    with col1:
+                        st.write(f"**{article['title']}**")
+                    with col2:
+                        copy_button_html = f"""
+                        <button onclick="navigator.clipboard.writeText('{article['title']}')">Copy</button>
+                        """
+                        st.components.v1.html(copy_button_html, height=35)
                 except Exception as e:
                     pass
 
