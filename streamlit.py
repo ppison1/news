@@ -230,6 +230,7 @@ else:
                     col1, col2 = st.columns([10, 1])  # Colonne modificate per spazio
                     with col1:
                         st.write(f"**{article['title']}**")
+                        st.write(f"Published on: {article['pub_date']}")
                     with col2:
                         copy_button_html = f"""
                         <button onclick="navigator.clipboard.writeText('{article['title']}')">Copy</button>
