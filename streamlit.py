@@ -10,6 +10,7 @@ from tvDatafeed import TvDatafeed, Interval
 import pandas as pd
 import plotly.graph_objects as go
 import io
+import re
 
 
 user = st.secrets["user"]
@@ -174,7 +175,7 @@ else:
     if feed_name:
         if feed_name == "Calendario":
             st.write("### Economic Calendar")
-            st.components.v1.html("""<iframe src="https://sslecal2.investing.com?columns&category=_employment,_economicActivity,_inflation,_credit,_centralBanks,_confidenceIndex,_balance,_Bonds&importance=2,3&features=timeselector&countries=5&calType=week&timeZone=16&lang=9" width="450" height="467" frameborder="0" allowtransparency="true" marginwidth="0" marginheight="0"></iframe><div class="poweredBy" style="font-family: Arial, Helvetica, sans-serif;"><span style="font-size: 11px;color: #333333;text-decoration: none;">Calendario economico fornito da <a href="https://it.investing.com/" rel="nofollow" target="_blank" style="font-size: 11px;color: #06529D; font-weight: bold;" class="underline_link">Investing.com Italia</a> - Il Portale di Trading sul Forex e sui titoli di borsa.</span></div>""", height=600)
+            st.components.v1.html("""<iframe src="https://sslecal2.investing.com?columns&category=_employment,_economicActivity,_inflation,_credit,_centralBanks,_confidenceIndex,_balance,_Bonds&importance=2,3&features=timeselector&countries=5&calType=week&timeZone=8&lang=9" width="450" height="467" frameborder="0" allowtransparency="true" marginwidth="0" marginheight="0"></iframe><div class="poweredBy" style="font-family: Arial, Helvetica, sans-serif;"><span style="font-size: 11px;color: #333333;text-decoration: none;">Calendario economico fornito da <a href="https://it.investing.com/" rel="nofollow" target="_blank" style="font-size: 11px;color: #06529D; font-weight: bold;" class="underline_link">Investing.com Italia</a> - Il Portale di Trading sul Forex e sui titoli di borsa.</span></div>""", height=600)
         elif feed_name == "Chart":
             st.write("### Charts")
             tv = TvDatafeed()
@@ -227,13 +228,15 @@ else:
 
             for idx, article in enumerate(sorted_articles):
                 try:
-                    col1, col2 = st.columns([10, 1])  # Colonne modificate per spazio
+                    col1, col2 = st.columns([10, 1])
+                    clean_title = re.sub(r'[^A-Za-z]', ' ', article['title'])
+                    clean_title = re.sub(r'\s+', ' ', clean_title).strip()
                     with col1:
                         st.write(f"<span style='color:#1f77b4; font-size: 20px; font-weight: bold;'>{article['title']}</span>", unsafe_allow_html=True)
                         st.write(f"Published on: {article['pub_date']}")
                     with col2:
                         copy_button_html = f"""
-                        <button onclick="navigator.clipboard.writeText('{article['title']}')">Copy</button>
+                        <button onclick="navigator.clipboard.writeText('{clean_title}')">Copy</button>
                         """
                         st.components.v1.html(copy_button_html, height=35)
                 except Exception as e:
