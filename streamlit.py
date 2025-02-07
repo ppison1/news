@@ -146,7 +146,7 @@ def process_image(image):
     ]
     )
 
-    response = chat_session.send_message("riesci a darmi almeno 10 prezzi chiave di questo grafico in ordine decrescente.")
+    response = chat_session.send_message("riesci a darmi i prezzi chiave di questo grafico in ordine decrescente.")
     return response.text
     
 
