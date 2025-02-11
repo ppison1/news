@@ -114,6 +114,7 @@ def process_link(link):
     response = chat_session.send_message(f"Riassumi in italiano {link}")
     return response.text
 
+
 def process_image(image):
     def upload_to_gemini(image, mime_type="image/png"):
         file = genai.upload_file(io.BytesIO(image), mime_type=mime_type)
@@ -150,121 +151,121 @@ def process_image(image):
     return response.text
     
 
-# Check login status
-if "authenticated" not in st.session_state or not st.session_state["authenticated"]:
-    login()
-else:
-    check_inactivity()
+# # Check login status
+# if "authenticated" not in st.session_state or not st.session_state["authenticated"]:
+#     login()
+# else:
+#     check_inactivity()
 
-    if not st.session_state["authenticated"]:
-        st.stop()
+#     if not st.session_state["authenticated"]:
+#         st.stop()
 
-    if st.sidebar.button("Logout"):
-        st.session_state["authenticated"] = False
+#     if st.sidebar.button("Logout"):
+#         st.session_state["authenticated"] = False
 
-    # Streamlit app layout
-    st.title("NEWS")
+# Streamlit app layout
+st.title("NEWS")
 
-    # feed_name = st.sidebar.selectbox("Select an RSS Feed", list(RSS_FEEDS.keys()))
-    feed_name = st.sidebar.radio(
-        "Select an RSS Feed",
-        list(RSS_FEEDS.keys()),
-        index=2,
-    )
+# feed_name = st.sidebar.selectbox("Select an RSS Feed", list(RSS_FEEDS.keys()))
+feed_name = st.sidebar.radio(
+    "Select an RSS Feed",
+    list(RSS_FEEDS.keys()),
+    index=2,
+)
 
-    if feed_name:
-        if feed_name == "Calendario":
-            st.write("### Economic Calendar")
-            st.components.v1.html("""<iframe src="https://sslecal2.investing.com?columns&category=_employment,_economicActivity,_inflation,_credit,_centralBanks,_confidenceIndex,_balance,_Bonds&importance=2,3&features=timeselector&countries=5&calType=week&timeZone=8&lang=9" width="450" height="467" frameborder="0" allowtransparency="true" marginwidth="0" marginheight="0"></iframe><div class="poweredBy" style="font-family: Arial, Helvetica, sans-serif;"><span style="font-size: 11px;color: #333333;text-decoration: none;">Calendario economico fornito da <a href="https://it.investing.com/" rel="nofollow" target="_blank" style="font-size: 11px;color: #06529D; font-weight: bold;" class="underline_link">Investing.com Italia</a> - Il Portale di Trading sul Forex e sui titoli di borsa.</span></div>""", height=600)
-        elif feed_name == "Chart":
-            st.write("### Charts")
-            tv = TvDatafeed()
-            df = tv.get_hist(symbol='NQH2025',exchange='CME_MINI',interval=Interval.in_5_minute, n_bars=5000)
-            df['datetime_ny'] = pd.to_datetime(df.index).tz_localize('Etc/GMT')
-            df['datetime_ny'] = df['datetime_ny'].dt.tz_convert('America/New_York')
-            
-            selected_dates = st.date_input("Select dates", None)
-            dates_to_filter = pd.to_datetime([selected_dates]).date
+if feed_name:
+    if feed_name == "Calendario":
+        st.write("### Economic Calendar")
+        st.components.v1.html("""<iframe src="https://sslecal2.investing.com?columns&category=_employment,_economicActivity,_inflation,_credit,_centralBanks,_confidenceIndex,_balance,_Bonds&importance=2,3&features=timeselector&countries=5&calType=week&timeZone=8&lang=9" width="450" height="467" frameborder="0" allowtransparency="true" marginwidth="0" marginheight="0"></iframe><div class="poweredBy" style="font-family: Arial, Helvetica, sans-serif;"><span style="font-size: 11px;color: #333333;text-decoration: none;">Calendario economico fornito da <a href="https://it.investing.com/" rel="nofollow" target="_blank" style="font-size: 11px;color: #06529D; font-weight: bold;" class="underline_link">Investing.com Italia</a> - Il Portale di Trading sul Forex e sui titoli di borsa.</span></div>""", height=600)
+    elif feed_name == "Chart":
+        st.write("### Charts")
+        tv = TvDatafeed()
+        df = tv.get_hist(symbol='NQH2025',exchange='CME_MINI',interval=Interval.in_5_minute, n_bars=5000)
+        df['datetime_ny'] = pd.to_datetime(df.index).tz_localize('Etc/GMT')
+        df['datetime_ny'] = df['datetime_ny'].dt.tz_convert('America/New_York')
+        
+        selected_dates = st.date_input("Select dates", None)
+        dates_to_filter = pd.to_datetime([selected_dates]).date
 
-            df = df[
-                (df.datetime_ny.dt.time >= pd.Timestamp('09:30:00').time()) & 
-                (df.datetime_ny.dt.time < pd.Timestamp('16:00:00').time()) &
-                (df.datetime_ny.dt.date.isin(dates_to_filter))
-            ]
-            fig = go.Figure()
-            fig.add_trace(go.Candlestick(
-                x=df['datetime_ny'],
-                open=df['open'],
-                high=df['high'],
-                low=df['low'],
-                close=df['close'],
-                name="Candlestick"
-            ))
-            # Update layout for better visuals
-            fig.update_layout(
-                title="Stock Prices Over Time",
-                xaxis_title="Date",
-                yaxis_title="Price",
-                xaxis_rangeslider_visible=False,
-                yaxis=dict(
-                    tickformat='.0f',
-                    showgrid=True,
-                    gridcolor='lightgray',
-                    gridwidth=0,
-                    dtick=10 
-                )
+        df = df[
+            (df.datetime_ny.dt.time >= pd.Timestamp('09:30:00').time()) & 
+            (df.datetime_ny.dt.time < pd.Timestamp('16:00:00').time()) &
+            (df.datetime_ny.dt.date.isin(dates_to_filter))
+        ]
+        fig = go.Figure()
+        fig.add_trace(go.Candlestick(
+            x=df['datetime_ny'],
+            open=df['open'],
+            high=df['high'],
+            low=df['low'],
+            close=df['close'],
+            name="Candlestick"
+        ))
+        # Update layout for better visuals
+        fig.update_layout(
+            title="Stock Prices Over Time",
+            xaxis_title="Date",
+            yaxis_title="Price",
+            xaxis_rangeslider_visible=False,
+            yaxis=dict(
+                tickformat='.0f',
+                showgrid=True,
+                gridcolor='lightgray',
+                gridwidth=0,
+                dtick=10 
             )
-            # Display in Streamlit
-            st.plotly_chart(fig)
-            if len(df) > 0:
-                st.write(f"#### {process_image(fig.to_image(format="png"))}")
-        else:
-            feed_urls = RSS_FEEDS[feed_name]
+        )
+        # Display in Streamlit
+        st.plotly_chart(fig)
+        # if len(df) > 0:
+        #     st.write(f"#### {process_image(fig.to_image(format="png"))}")
+    else:
+        feed_urls = RSS_FEEDS[feed_name]
 
-            st.write(f"### Articles from {feed_name}")
+        st.write(f"### Articles from {feed_name}")
 
-            articles = fetch_rss_articles(feed_urls)
-            sorted_articles = sorted(articles, key=lambda x: x['pub_date'], reverse=True)
+        articles = fetch_rss_articles(feed_urls)
+        sorted_articles = sorted(articles, key=lambda x: x['pub_date'], reverse=True)
 
-            for idx, article in enumerate(sorted_articles):
-                try:
-                    col1, col2 = st.columns([10, 1])
-                    clean_title = re.sub(r'[^A-Za-z]', ' ', article['title'])
-                    clean_title = re.sub(r'\s+', ' ', clean_title).strip()
-                    with col1:
-                        st.write(f"<span style='color:#1f77b4; font-size: 20px; font-weight: bold;'>{article['title']}</span>", unsafe_allow_html=True)
-                        st.write(f"Published on: {article['pub_date']}")
-                    with col2:
-                        copy_button_html = f"""
-                        <button onclick="navigator.clipboard.writeText('{clean_title}')">Copy</button>
-                        """
-                        st.components.v1.html(copy_button_html, height=35)
-                except Exception as e:
-                    pass
+        for idx, article in enumerate(sorted_articles):
+            try:
+                col1, col2 = st.columns([10, 1])
+                clean_title = re.sub(r'[^A-Za-z]', ' ', article['title'])
+                clean_title = re.sub(r'\s+', ' ', clean_title).strip()
+                with col1:
+                    st.write(f"<span style='color:#1f77b4; font-size: 20px; font-weight: bold;'>{article['title']}</span>", unsafe_allow_html=True)
+                    st.write(f"Published on: {article['pub_date']}")
+                with col2:
+                    copy_button_html = f"""
+                    <button onclick="navigator.clipboard.writeText('{clean_title}')">Copy</button>
+                    """
+                    st.components.v1.html(copy_button_html, height=35)
+            except Exception as e:
+                pass
 
-            # for idx, article in enumerate(sorted_articles):
-            #     try:
-            #         col1, col2 = st.columns([10, 1])
-            #         article_key = f"output_{article['title']}"  # Unique key for each article
-            #         with col1:
-            #             if "ilsole24ore" in article['link'] or "corriere" in article['link']:
-            #                 st.write(f"[{article['title']}]({article['clean_link']})")
-            #             else:
-            #                 st.write(f"[{article['title']}]({article['link']})")
-            #             st.write(f"Published on: {article['pub_date']}")
-            #             # st.write(article['description'])
-            #             if article_key not in st.session_state:
-            #                 st.session_state[article_key] = ""  # Initialize state
-            #             output_placeholder = st.empty()
-            #             output_placeholder.write(f"{st.session_state[article_key]}")
-                        
-            #         with col2:
-            #             if st.button(f"AI", key=article['link']):
-            #                 if "ilsole24ore" in article['link'] or "corriere" in article['link']:
-            #                     output = process_link(article['clean_link'])
-            #                 else:
-            #                     output = process_link(article['link'])
-            #                 st.session_state[article_key] = output
-            #                 output_placeholder.write(f"{output}")
-            #     except Exception as e:
-            #         pass
+        # for idx, article in enumerate(sorted_articles):
+        #     try:
+        #         col1, col2 = st.columns([10, 1])
+        #         article_key = f"output_{article['title']}"  # Unique key for each article
+        #         with col1:
+        #             if "ilsole24ore" in article['link'] or "corriere" in article['link']:
+        #                 st.write(f"[{article['title']}]({article['clean_link']})")
+        #             else:
+        #                 st.write(f"[{article['title']}]({article['link']})")
+        #             st.write(f"Published on: {article['pub_date']}")
+        #             # st.write(article['description'])
+        #             if article_key not in st.session_state:
+        #                 st.session_state[article_key] = ""  # Initialize state
+        #             output_placeholder = st.empty()
+        #             output_placeholder.write(f"{st.session_state[article_key]}")
+                    
+        #         with col2:
+        #             if st.button(f"AI", key=article['link']):
+        #                 if "ilsole24ore" in article['link'] or "corriere" in article['link']:
+        #                     output = process_link(article['clean_link'])
+        #                 else:
+        #                     output = process_link(article['link'])
+        #                 st.session_state[article_key] = output
+        #                 output_placeholder.write(f"{output}")
+        #     except Exception as e:
+        #         pass
