@@ -19,7 +19,7 @@ g_id = st.secrets["g_id"]
 timeout = int(st.secrets["timeout"])
 
 RSS_FEEDS = {
-    "Chart": None,
+    # "Chart": None,
     "Calendario": None,
     "Mondo": ["https://it.investing.com/rss/news_285.rss", "https://www.ilsole24ore.com/rss/mondo.xml"],
     "Economia": ["https://it.investing.com/rss/news_14.rss", "https://www.ilsole24ore.com/rss/economia.xml"],
