@@ -27,6 +27,7 @@ RSS_FEEDS = {
     "Italia": ["https://www.ilsole24ore.com/rss/italia.xml", "https://www.corriere.it/dynamic-feed/rss/section/Milano.xml"],
     "Motori": ["https://xml2.corriereobjects.it/rss/motori.xml", "https://it.motorsport.com/rss/f1/news/", "https://www.moto.it/rss/news-motogp.xml"],
 }
+RSS_FEEDS["ALL"] = sum((v for v in RSS_FEEDS.values() if v is not None), [])
 
 
 def login():
@@ -170,8 +171,9 @@ st.title("NEWS")
 feed_name = st.sidebar.radio(
     "Select an RSS Feed",
     list(RSS_FEEDS.keys()),
-    index=2,
+    index=6,
 )
+
 
 if feed_name:
     if feed_name == "Calendario":
