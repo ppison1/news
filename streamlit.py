@@ -58,6 +58,18 @@ def fetch_rss_articles(feed_urls):
     articles = []
 
     for feed_url in feed_urls:
+        source = ""
+        if "ilsole24ore" in feed_url:
+            source = "Il Sole 24 Ore"
+        elif "corriere" in feed_url:
+            source = "Corriere della Sera"
+        elif "investing" in feed_url:
+            source = "Investing"
+        elif "motorsport" in feed_url:
+            source = "Motorsport"
+        elif "moto" in feed_url:
+            source = "Moto.it"
+
         response = requests.get(feed_url)
         response.raise_for_status()
         root = ET.fromstring(response.content)
@@ -84,6 +96,7 @@ def fetch_rss_articles(feed_urls):
                         "clean_link": f"https://12ft.io/{link}",
                         "description": description_text,
                         "pub_date": pub_date.strftime("%Y-%m-%d %H:%M:%S"),
+                        "source": source
                     })
                 except Exception as e:
                     pass
@@ -234,9 +247,10 @@ if feed_name:
                 col1, col2 = st.columns([10, 1])
                 clean_title = re.sub(r'[^A-Za-z]', ' ', article['title'])
                 clean_title = re.sub(r'\s+', ' ', clean_title).strip()
+                clean_title = f"Raccontami articolo del {article['source']} con titolo: {clean_title} e approfonodisci con alte fonti."
                 with col1:
                     st.write(f"<span style='color:#1f77b4; font-size: 20px; font-weight: bold;'>{article['title']}</span>", unsafe_allow_html=True)
-                    st.write(f"Published on: {article['pub_date']}")
+                    st.write(f"Published on: {article['pub_date']} - {article['source']}")
                 with col2:
                     copy_button_html = f"""
                     <button onclick="navigator.clipboard.writeText('{clean_title}')">Copy</button>
@@ -245,29 +259,4 @@ if feed_name:
             except Exception as e:
                 pass
 
-        # for idx, article in enumerate(sorted_articles):
-        #     try:
-        #         col1, col2 = st.columns([10, 1])
-        #         article_key = f"output_{article['title']}"  # Unique key for each article
-        #         with col1:
-        #             if "ilsole24ore" in article['link'] or "corriere" in article['link']:
-        #                 st.write(f"[{article['title']}]({article['clean_link']})")
-        #             else:
-        #                 st.write(f"[{article['title']}]({article['link']})")
-        #             st.write(f"Published on: {article['pub_date']}")
-        #             # st.write(article['description'])
-        #             if article_key not in st.session_state:
-        #                 st.session_state[article_key] = ""  # Initialize state
-        #             output_placeholder = st.empty()
-        #             output_placeholder.write(f"{st.session_state[article_key]}")
-                    
-        #         with col2:
-        #             if st.button(f"AI", key=article['link']):
-        #                 if "ilsole24ore" in article['link'] or "corriere" in article['link']:
-        #                     output = process_link(article['clean_link'])
-        #                 else:
-        #                     output = process_link(article['link'])
-        #                 st.session_state[article_key] = output
-        #                 output_placeholder.write(f"{output}")
-        #     except Exception as e:
-        #         pass
+
