@@ -247,7 +247,7 @@ if feed_name:
                 col1, col2 = st.columns([10, 1])
                 clean_title = re.sub(r'[^A-Za-z]', ' ', article['title'])
                 clean_title = re.sub(r'\s+', ' ', clean_title).strip()
-                clean_title = f"Raccontami articolo del periodico {article['source']} con titolo: {clean_title} e approfonodisci con alte fonti."
+                clean_title = f"Raccontami articolo del periodico {article['source']} con titolo: {clean_title} e approfondisci con alte fonti."
                 with col1:
                     st.write(f"<span style='color:#1f77b4; font-size: 20px; font-weight: bold;'>{article['title']}</span>", unsafe_allow_html=True)
                     st.write(f"Published on: {article['pub_date']} - {article['source']}")
