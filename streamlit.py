@@ -40,23 +40,14 @@ RSS_FEEDS["Motori"] = ["https://xml2.corriereobjects.it/rss/motori.xml", "https:
 
 def login():
     st.title("Login")
-    cookies = cookie_manager.get_all()
-    if cookies.get(COOKIE_NAME) == "authenticated":
-        st.session_state["authenticated"] = True
-        st.session_state["last_activity"] = datetime.now()
-        st.success("Login successful!")
-    else:
-        username = st.text_input("Username")
-        password = st.text_input("Password", type="password")
-        if st.button("Login"):
-            if username == user and password == passwd:
-                expiry_date = datetime.now() + timedelta(days=COOKIE_EXPIRY_DAYS)
-                cookie_manager.set(COOKIE_NAME, "authenticated", expires_at=expiry_date)
-                st.session_state["authenticated"] = True
-                st.session_state["last_activity"] = datetime.now()
-                st.success("Login successful!")
-            else:
-                st.error("Invalid username or password")
+    username = st.text_input("Username")
+    password = st.text_input("Password", type="password")
+    if st.button("Login"):
+         if username == user and password == passwd:
+            expiry_date = datetime.now() + timedelta(days=COOKIE_EXPIRY_DAYS)
+            cookie_manager.set(COOKIE_NAME, "authenticated", expires_at=expiry_date)
+         else:
+             st.error("Invalid username or password")
 
 
 # Check for inactivity
@@ -182,17 +173,10 @@ def process_image(image):
     
 
 # Check login status
-if "authenticated" not in st.session_state or not st.session_state["authenticated"]:
+cookies = cookie_manager.get_all()
+if not cookies.get(COOKIE_NAME) == "authenticated":
     login()
 else:
-    check_inactivity()
-
-    if not st.session_state["authenticated"]:
-        st.stop()
-
-    if st.sidebar.button("Logout"):
-        st.session_state["authenticated"] = False
-
     # Streamlit app layout
     st.title("NEWS")
 
