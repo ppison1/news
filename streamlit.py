@@ -11,7 +11,15 @@ import pandas as pd
 import plotly.graph_objects as go
 import io
 import re
+from extra_streamlit_components import CookieManager
+from datetime import datetime, timedelta
 
+# Inizializza il gestore dei cookie
+cookie_manager = CookieManager()
+
+# Nome del cookie e durata
+COOKIE_NAME = "user_auth"
+COOKIE_EXPIRY_DAYS = 30
 
 user = st.secrets["user"]
 passwd = st.secrets["password"]
@@ -32,15 +40,23 @@ RSS_FEEDS["Motori"] = ["https://xml2.corriereobjects.it/rss/motori.xml", "https:
 
 def login():
     st.title("Login")
-    username = st.text_input("Username")
-    password = st.text_input("Password", type="password")
-    if st.button("Login"):
-        if username == user and password == passwd:
-            st.session_state["authenticated"] = True
-            st.session_state["last_activity"] = datetime.now()
-            st.success("Login successful!")
-        else:
-            st.error("Invalid username or password")
+    cookies = cookie_manager.get_all()
+    if cookies.get(COOKIE_NAME) == "authenticated":
+        st.session_state["authenticated"] = True
+        st.session_state["last_activity"] = datetime.now()
+        st.success("Login successful!")
+    else:
+        username = st.text_input("Username")
+        password = st.text_input("Password", type="password")
+        if st.button("Login"):
+            if username == user and password == passwd:
+                expiry_date = datetime.now() + timedelta(days=COOKIE_EXPIRY_DAYS)
+                cookie_manager.set(COOKIE_NAME, "authenticated", expires_at=expiry_date)
+                st.session_state["authenticated"] = True
+                st.session_state["last_activity"] = datetime.now()
+                st.success("Login successful!")
+            else:
+                st.error("Invalid username or password")
 
 
 # Check for inactivity
