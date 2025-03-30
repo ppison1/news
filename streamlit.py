@@ -178,7 +178,7 @@ def process_image(image):
     return response.text
 
 
-def main:
+def main():
     # Streamlit app layout
     st.title("NEWS")
 
@@ -188,7 +188,6 @@ def main:
         list(RSS_FEEDS.keys()),
         index=4,
     )
-
 
     if feed_name:
         if feed_name == "Calendario":
@@ -261,8 +260,6 @@ def main:
                 except Exception as e:
                     pass
 
-
-    
 
 # Check login status
 if not check_cookie():
