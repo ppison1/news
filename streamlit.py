@@ -180,8 +180,8 @@ def process_image(image):
 
 # Check login status
 if not check_cookie():
-        login()    
-
+    login()
+finally:
     # Streamlit app layout
     st.title("NEWS")
 
