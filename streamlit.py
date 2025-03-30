@@ -11,8 +11,12 @@ import pandas as pd
 import plotly.graph_objects as go
 import io
 import re
+from extra_streamlit_components import CookieManager
+from datetime import datetime, timedelta
 
-
+cookie_manager = CookieManager()
+COOKIE_NAME = "user_auth"
+COOKIE_EXPIRY_DAYS = 30
 user = st.secrets["user"]
 passwd = st.secrets["password"]
 g_id = st.secrets["g_id"]
@@ -36,11 +40,20 @@ def login():
     password = st.text_input("Password", type="password")
     if st.button("Login"):
         if username == user and password == passwd:
-            st.session_state["authenticated"] = True
-            st.session_state["last_activity"] = datetime.now()
-            st.success("Login successful!")
+            expiry_date = datetime.now() + timedelta(days=COOKIE_EXPIRY_DAYS)
+            cookie_manager.set(COOKIE_NAME, "authenticated", expires_at=expiry_date)
+            st.success("Login effettuato con successo!")
         else:
-            st.error("Invalid username or password")
+            st.error("Username o password non validi")
+
+
+def check_cookie():
+    # Controlla se il cookie esiste
+    cookies = cookie_manager.get_all()
+    if cookies.get(COOKIE_NAME) == "authenticated":
+        st.success("Sei già autenticato!")
+        return True
+    return False
 
 
 # Check for inactivity
@@ -166,16 +179,8 @@ def process_image(image):
     
 
 # Check login status
-if "authenticated" not in st.session_state or not st.session_state["authenticated"]:
-    login()
-else:
-    check_inactivity()
-
-    if not st.session_state["authenticated"]:
-        st.stop()
-
-    if st.sidebar.button("Logout"):
-        st.session_state["authenticated"] = False
+if not check_cookie():
+        login()    
 
     # Streamlit app layout
     st.title("NEWS")
