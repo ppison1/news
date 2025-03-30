@@ -176,12 +176,9 @@ def process_image(image):
 
     response = chat_session.send_message("riesci a darmi i prezzi chiave di questo grafico in ordine decrescente.")
     return response.text
-    
 
-# Check login status
-if not check_cookie():
-    login()
-else:
+
+def main:
     # Streamlit app layout
     st.title("NEWS")
 
@@ -263,3 +260,11 @@ else:
                         st.components.v1.html(copy_button_html, height=35)
                 except Exception as e:
                     pass
+
+
+    
+
+# Check login status
+if not check_cookie():
+    login()
+main()
