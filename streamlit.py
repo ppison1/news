@@ -11,12 +11,8 @@ import pandas as pd
 import plotly.graph_objects as go
 import io
 import re
-from extra_streamlit_components import CookieManager
-from datetime import datetime, timedelta
 
-cookie_manager = CookieManager()
-COOKIE_NAME = "user_auth"
-COOKIE_EXPIRY_DAYS = 30
+
 user = st.secrets["user"]
 passwd = st.secrets["password"]
 g_id = st.secrets["g_id"]
@@ -40,19 +36,21 @@ def login():
     password = st.text_input("Password", type="password")
     if st.button("Login"):
         if username == user and password == passwd:
-            expiry_date = datetime.now() + timedelta(days=COOKIE_EXPIRY_DAYS)
-            cookie_manager.set(COOKIE_NAME, "authenticated", expires_at=expiry_date)
-            st.success("Login effettuato con successo!")
+            st.session_state["authenticated"] = True
+            st.session_state["last_activity"] = datetime.now()
+            st.success("Login successful!")
         else:
-            st.error("Username o password non validi")
+            st.error("Invalid username or password")
 
 
-def check_cookie():
-    # Controlla se il cookie esiste
-    cookies = cookie_manager.get_all()
-    if not cookies.get(COOKIE_NAME) == "authenticated":
-        login()
-    main()
+# Check for inactivity
+def check_inactivity():
+    if "last_activity" in st.session_state:
+        now = datetime.now()
+        if now - st.session_state["last_activity"] > timedelta(minutes=timeout):
+            st.session_state["authenticated"] = False
+            st.sidebar.warning("You have been logged out due to inactivity.")
+    st.session_state["last_activity"] = datetime.now()
 
 
 # Function to fetch articles from an RSS feed
@@ -165,9 +163,20 @@ def process_image(image):
 
     response = chat_session.send_message("riesci a darmi i prezzi chiave di questo grafico in ordine decrescente.")
     return response.text
+    
 
+# Check login status
+if "authenticated" not in st.session_state or not st.session_state["authenticated"]:
+    login()
+else:
+    check_inactivity()
 
-def main():
+    if not st.session_state["authenticated"]:
+        st.stop()
+
+    if st.sidebar.button("Logout"):
+        st.session_state["authenticated"] = False
+
     # Streamlit app layout
     st.title("NEWS")
 
@@ -177,6 +186,7 @@ def main():
         list(RSS_FEEDS.keys()),
         index=4,
     )
+
 
     if feed_name:
         if feed_name == "Calendario":
@@ -248,10 +258,3 @@ def main():
                         st.components.v1.html(copy_button_html, height=35)
                 except Exception as e:
                     pass
-
-
-if check_cookie():
-    logout()  # Mostra il pulsante di logout nella sidebar
-    main()  # Mostra l'applicazione principale
-else:
-    login()  # Mostra la schermata di login
