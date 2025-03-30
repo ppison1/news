@@ -47,7 +47,7 @@ def login():
             expiry_date = datetime.now() + timedelta(days=COOKIE_EXPIRY_DAYS)
             cookie_manager.set(COOKIE_NAME, "authenticated", expires_at=expiry_date)
             st.success("Login successful!")
-            st.experimental_rerun()
+            st.rerun()
          else:
              st.error("Invalid username or password")
 
