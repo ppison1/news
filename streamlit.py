@@ -42,7 +42,7 @@ def login():
         if username == user and password == passwd:
             expiry_date = datetime.now() + timedelta(days=COOKIE_EXPIRY_DAYS)
             cookie_manager.set(COOKIE_NAME, "authenticated", expires_at=expiry_date)
-            main()
+            st.success("Login effettuato con successo!")
         else:
             st.error("Username o password non validi")
 
@@ -50,10 +50,9 @@ def login():
 def check_cookie():
     # Controlla se il cookie esiste
     cookies = cookie_manager.get_all()
-    if cookies.get(COOKIE_NAME) == "authenticated":
-        main()
-    else:
+    if not cookies.get(COOKIE_NAME) == "authenticated":
         login()
+    main()
 
 
 # Check for inactivity
