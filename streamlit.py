@@ -181,7 +181,7 @@ def process_image(image):
 # Check login status
 if not check_cookie():
     login()
-finally:
+else:
     # Streamlit app layout
     st.title("NEWS")
 
