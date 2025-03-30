@@ -13,14 +13,13 @@ import io
 import re
 from extra_streamlit_components import CookieManager
 from datetime import datetime, timedelta
-import time
 
 # Inizializza il gestore dei cookie
 cookie_manager = CookieManager()
 
 # Nome del cookie e durata
 COOKIE_NAME = "user_auth"
-COOKIE_EXPIRY_DAYS = 30
+COOKIE_EXPIRY_DAYS = 1
 
 user = st.secrets["user"]
 passwd = st.secrets["password"]
@@ -48,8 +47,6 @@ def login():
             expiry_date = datetime.now() + timedelta(days=COOKIE_EXPIRY_DAYS)
             cookie_manager.set(COOKIE_NAME, "authenticated", expires_at=expiry_date)
             st.success("Login successful!")
-            time.sleep(2)
-            st.rerun()
          else:
              st.error("Invalid username or password")
 
