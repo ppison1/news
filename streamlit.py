@@ -55,16 +55,6 @@ def check_cookie():
     main()
 
 
-# Check for inactivity
-def check_inactivity():
-    if "last_activity" in st.session_state:
-        now = datetime.now()
-        if now - st.session_state["last_activity"] > timedelta(minutes=timeout):
-            st.session_state["authenticated"] = False
-            st.sidebar.warning("You have been logged out due to inactivity.")
-    st.session_state["last_activity"] = datetime.now()
-
-
 # Function to fetch articles from an RSS feed
 def fetch_rss_articles(feed_urls):
     articles = []
@@ -260,5 +250,8 @@ def main():
                     pass
 
 
-# Check login status
-check_cookie()
+if check_cookie():
+    logout()  # Mostra il pulsante di logout nella sidebar
+    main()  # Mostra l'applicazione principale
+else:
+    login()  # Mostra la schermata di login
