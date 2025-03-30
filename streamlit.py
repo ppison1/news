@@ -20,11 +20,8 @@ cookie_manager = CookieManager()
 # Nome del cookie e durata
 COOKIE_NAME = "user_auth"
 COOKIE_EXPIRY_DAYS = 1
-
 user = st.secrets["user"]
 passwd = st.secrets["password"]
-g_id = st.secrets["g_id"]
-timeout = int(st.secrets["timeout"])
 
 RSS_FEEDS = {
     # "Chart": None,
@@ -49,16 +46,6 @@ def login():
             st.success("Login successful!")
          else:
              st.error("Invalid username or password")
-
-
-# Check for inactivity
-def check_inactivity():
-    if "last_activity" in st.session_state:
-        now = datetime.now()
-        if now - st.session_state["last_activity"] > timedelta(minutes=timeout):
-            st.session_state["authenticated"] = False
-            st.sidebar.warning("You have been logged out due to inactivity.")
-    st.session_state["last_activity"] = datetime.now()
 
 
 # Function to fetch articles from an RSS feed
@@ -110,68 +97,6 @@ def fetch_rss_articles(feed_urls):
                     pass
     return articles
 
-
-# Function to process the link
-def process_link(link):
-    # Replace this with your actual processing logic
-    genai.configure(api_key=g_id)
-    # Create the model
-    generation_config = {
-        "temperature": 1,
-        "top_p": 0.95,
-        "top_k": 40,
-        "max_output_tokens": 8192,
-        "response_mime_type": "text/plain",
-    }
-
-    model = genai.GenerativeModel(
-        model_name="gemini-2.0-flash-exp",
-        generation_config=generation_config,
-    )
-
-    chat_session = model.start_chat(
-        history=[
-        ]
-    )
-    response = chat_session.send_message(f"Riassumi in italiano {link}")
-    return response.text
-
-
-def process_image(image):
-    def upload_to_gemini(image, mime_type="image/png"):
-        file = genai.upload_file(io.BytesIO(image), mime_type=mime_type)
-        return file
-    
-    genai.configure(api_key=g_id)
-    generation_config = {
-        "temperature": 1,
-        "top_p": 0.95,
-        "top_k": 40,
-        "max_output_tokens": 8192,
-        "response_mime_type": "text/plain",
-    }
-
-    model = genai.GenerativeModel(
-        model_name="gemini-2.0-flash-exp",
-        generation_config=generation_config,
-    )
-    files = [
-        upload_to_gemini(image, mime_type="image/png"),
-    ]
-    chat_session = model.start_chat(
-    history=[
-        {
-        "role": "user",
-        "parts": [
-            files[0],
-        ],
-        },
-    ]
-    )
-
-    response = chat_session.send_message("riesci a darmi i prezzi chiave di questo grafico in ordine decrescente.")
-    return response.text
-    
 
 # Check login status
 cookies = cookie_manager.get_all()
