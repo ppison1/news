@@ -27,12 +27,13 @@ RSS_FEEDS = {
     # "Chart": None,
     "Calendario": None,
     "Mondo": ["https://it.investing.com/rss/news_285.rss", "https://www.ilsole24ore.com/rss/mondo.xml"],
-    "Economia": ["https://it.investing.com/rss/news_14.rss", "https://www.ilsole24ore.com/rss/economia.xml"],
-    "Finanza": ["https://it.investing.com/rss/news_25.rss", "https://www.ilsole24ore.com/rss/finanza.xml"],
+    "Economia": ["https://it.investing.com/rss/news_14.rss", "https://www.ilsole24ore.com/rss/economia.xml", "https://feeds.content.dowjones.io/public/rss/socialeconomyfeed", "https://feeds.content.dowjones.io/public/rss/WSJcomUSBusiness"],
+    "Finanza": ["https://it.investing.com/rss/news_25.rss", "https://www.ilsole24ore.com/rss/finanza.xml", "https://feeds.content.dowjones.io/public/rss/RSSMarketsMain"],
 }
 RSS_FEEDS["All"] = sum((v for v in RSS_FEEDS.values() if v is not None), [])
 RSS_FEEDS["Italia"] = ["https://www.ilsole24ore.com/rss/italia.xml", "https://www.corriere.it/dynamic-feed/rss/section/Milano.xml"]
 RSS_FEEDS["Motori"] = ["https://xml2.corriereobjects.it/rss/motori.xml", "https://it.motorsport.com/rss/f1/news/", "https://www.moto.it/rss/news-motogp.xml"]
+RSS_FEEDS["Tecnologia"] = ["https://feeds.content.dowjones.io/public/rss/RSSWSJD"]
 
 
 def login():
@@ -64,6 +65,8 @@ def fetch_rss_articles(feed_urls):
             source = "Motorsport"
         elif "moto" in feed_url:
             source = "Moto.it"
+        elif "dowjones" in feed_url:
+            source = "WSJ"
 
         response = requests.get(feed_url)
         response.raise_for_status()
@@ -79,7 +82,7 @@ def fetch_rss_articles(feed_urls):
                     except:
                         description = ""
                     pub_date = item.find("pubDate").text
-                    pub_date = dateutil.parser.parse(pub_date).astimezone(pytz.timezone('Europe/Rome'))
+                    pub_date = dateutil.parser.parse(pub_date)#.astimezone(pytz.timezone('Europe/Rome'))
 
                     # Clean up description using BeautifulSoup
                     soup = BeautifulSoup(description, 'html.parser')
@@ -173,7 +176,7 @@ else:
                     col1, col2 = st.columns([10, 1])
                     clean_title = re.sub(r'[^A-Za-z]', ' ', article['title'])
                     clean_title = re.sub(r'\s+', ' ', clean_title).strip()
-                    clean_title = f"Raccontami articolo del periodico {article['source']} con titolo: {clean_title} e approfondisci con alte fonti."
+                    clean_title = f"Raccontami in italiano articolo del periodico {article['source']} con titolo: {clean_title} e approfondisci con alte fonti."
                     with col1:
                         st.write(f"<span style='color:#1f77b4; font-size: 20px; font-weight: bold;'>{article['title']}</span>", unsafe_allow_html=True)
                         st.write(f"Published on: {article['pub_date']} - {article['source']}")
