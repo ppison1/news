@@ -114,7 +114,7 @@ else:
     feed_name = st.sidebar.radio(
         "Select an RSS Feed",
         list(RSS_FEEDS.keys()),
-        index=4,
+        index=5,
     )
 
 
