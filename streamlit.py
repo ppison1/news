@@ -160,7 +160,6 @@ else:
                 )
                 st.subheader("Grafico: Total USD Cumulative & Daily PNL")
                 st.plotly_chart(fig)
-        
         elif feed_name == "Chart":
             st.write("### Charts")
             tv = TvDatafeed()
@@ -214,7 +213,7 @@ else:
             for idx, article in enumerate(sorted_articles):
                 try:
                     col1, col2 = st.columns([10, 1])
-                    clean_title = re.sub(r'[^A-Za-z]', ' ', article['title'])
+                    clean_title = re.sub(r'[^A-Za-z0-9]', ' ', article['title'])
                     clean_title = re.sub(r'\s+', ' ', clean_title).strip()
                     clean_title = f"Raccontami in italiano articolo del periodico {article['source']} con titolo: {clean_title} e approfondisci con alte fonti."
                     with col1:
