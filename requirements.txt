@@ -8,3 +8,4 @@ lxml_html_clean
 newspaper3k
 pyperclip
 extra-streamlit-components
+googletrans
