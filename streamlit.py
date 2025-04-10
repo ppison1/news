@@ -4,7 +4,7 @@ from xml.etree import ElementTree as ET
 from bs4 import BeautifulSoup
 import dateutil.parser
 from datetime import datetime, timedelta
-# import pytz
+import pytz
 # import google.generativeai as genai
 from googletrans import Translator
 import asyncio
@@ -96,7 +96,7 @@ def fetch_rss_articles(feed_urls):
                     except:
                         description = ""
                     pub_date = item.find("pubDate").text
-                    pub_date = dateutil.parser.parse(pub_date)#.astimezone(pytz.timezone('Europe/Rome'))
+                    pub_date = dateutil.parser.parse(pub_date).astimezone(pytz.timezone('Europe/Rome'))
 
                     # Clean up description using BeautifulSoup
                     soup = BeautifulSoup(description, 'html.parser')
