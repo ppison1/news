@@ -4,21 +4,22 @@ from xml.etree import ElementTree as ET
 from bs4 import BeautifulSoup
 import dateutil.parser
 from datetime import datetime, timedelta
-import pytz
-import google.generativeai as genai
+# import pytz
+# import google.generativeai as genai
+from googletrans import Translator
+import asyncio
 from tvDatafeed import TvDatafeed, Interval
 import pandas as pd
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
-import io
+# import io
 import re
 from extra_streamlit_components import CookieManager
 from datetime import datetime, timedelta
+from threading import Thread
 
-# Inizializza il gestore dei cookie
 cookie_manager = CookieManager()
 
-# Nome del cookie e durata
 COOKIE_NAME = "user_auth"
 COOKIE_EXPIRY_DAYS = 1
 user = st.secrets["user"]
@@ -31,10 +32,11 @@ RSS_FEEDS = {
     "Economia": ["https://it.investing.com/rss/news_14.rss", "https://www.ilsole24ore.com/rss/economia.xml", "https://feeds.content.dowjones.io/public/rss/socialeconomyfeed", "https://feeds.content.dowjones.io/public/rss/WSJcomUSBusiness"],
     "Finanza": ["https://it.investing.com/rss/news_25.rss", "https://www.ilsole24ore.com/rss/finanza.xml", "https://feeds.content.dowjones.io/public/rss/RSSMarketsMain"],
 }
-RSS_FEEDS["All"] = sum((v for v in RSS_FEEDS.values() if v is not None), [])
+# RSS_FEEDS["All"] = sum((v for v in RSS_FEEDS.values() if v is not None), [])
 RSS_FEEDS["Italia"] = ["https://www.ilsole24ore.com/rss/italia.xml", "https://www.corriere.it/dynamic-feed/rss/section/Milano.xml"]
 RSS_FEEDS["Motori"] = ["https://xml2.corriereobjects.it/rss/motori.xml", "https://it.motorsport.com/rss/f1/news/", "https://www.moto.it/rss/news-motogp.xml"]
 RSS_FEEDS["Tecnologia"] = ["https://feeds.content.dowjones.io/public/rss/RSSWSJD"]
+RSS_FEEDS["All"] = sum((v for v in RSS_FEEDS.values() if v is not None), [])
 
 
 def login():
@@ -50,11 +52,18 @@ def login():
              st.error("Invalid username or password")
 
 
-# Function to fetch articles from an RSS feed
-def fetch_rss_articles(feed_urls):
-    articles = []
+async def to_it(text, src='en', dest='it'):
+    try:
+        translator = Translator()
+        traduzione = await translator.translate(text, src=src, dest=dest)
+        return traduzione.text
+    except Exception as ex:
+        print(ex)
+        return text
 
-    for feed_url in feed_urls:
+
+def fetch_rss_articles(feed_urls):
+    def run(feed_url):
         source = ""
         if "ilsole24ore" in feed_url:
             source = "Il Sole 24 Ore"
@@ -99,24 +108,27 @@ def fetch_rss_articles(feed_urls):
                     })
                 except Exception as e:
                     pass
+    
+    articles = []
+    threads = []
+    for feed_url in feed_urls:
+        threads.append(Thread(target=run, args=(feed_url,)))
+        threads[-1].start()
+    for thread in threads:
+        thread.join()
     return articles
 
 
-# Check login status
 cookies = cookie_manager.get_all()
 if not cookies.get(COOKIE_NAME) == "authenticated":
     login()
 else:
-    # Streamlit app layout
     st.title("NEWS")
-
-    # feed_name = st.sidebar.selectbox("Select an RSS Feed", list(RSS_FEEDS.keys()))
     feed_name = st.sidebar.radio(
         "Select an RSS Feed",
         list(RSS_FEEDS.keys()),
-        index=5,
+        index=8,
     )
-
 
     if feed_name:
         if feed_name == "Calendario":
@@ -213,11 +225,16 @@ else:
             for idx, article in enumerate(sorted_articles):
                 try:
                     col1, col2 = st.columns([10, 1])
+                    if article['source'] == "WSJ":
+                        title = asyncio.run(to_it(article['title']))
+                    else:
+                        title = article['title']
                     clean_title = re.sub(r'[^A-Za-z0-9]', ' ', article['title'])
                     clean_title = re.sub(r'\s+', ' ', clean_title).strip()
                     clean_title = f"Raccontami in italiano articolo del periodico {article['source']} con titolo: {clean_title} e approfondisci con alte fonti."
+                    title = f"{title}"
                     with col1:
-                        st.write(f"<span style='color:#1f77b4; font-size: 20px; font-weight: bold;'>{article['title']}</span>", unsafe_allow_html=True)
+                        st.write(f"<span style='color:#1f77b4; font-size: 20px; font-weight: bold;'>{title}</span>", unsafe_allow_html=True)
                         st.write(f"Published on: {article['pub_date']} - {article['source']}")
                     with col2:
                         copy_button_html = f"""
