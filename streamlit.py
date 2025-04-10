@@ -86,6 +86,10 @@ def fetch_rss_articles(feed_urls):
             for item in channel.findall("item"):
                 try:
                     title = item.find("title").text
+                    if source == "WSJ":
+                        title = asyncio.run(to_it(title))
+                    title = re.sub(r'[^A-Za-z0-9]', ' ', title)
+                    title = re.sub(r'\s+', ' ', title).strip()
                     link = item.find("link").text
                     try:
                         description = item.find("description").text
@@ -225,20 +229,13 @@ else:
             for idx, article in enumerate(sorted_articles):
                 try:
                     col1, col2 = st.columns([10, 1])
-                    if article['source'] == "WSJ":
-                        title = asyncio.run(to_it(article['title']))
-                    else:
-                        title = article['title']
-                    clean_title = re.sub(r'[^A-Za-z0-9]', ' ', article['title'])
-                    clean_title = re.sub(r'\s+', ' ', clean_title).strip()
-                    clean_title = f"Raccontami in italiano articolo del periodico {article['source']} con titolo: {clean_title} e approfondisci con alte fonti."
-                    title = f"{title}"
+                    title = f"Raccontami in italiano articolo del periodico {article['source']} con titolo: {article['title']} e approfondisci con alte fonti."
                     with col1:
-                        st.write(f"<span style='color:#1f77b4; font-size: 20px; font-weight: bold;'>{title}</span>", unsafe_allow_html=True)
+                        st.write(f"<span style='color:#1f77b4; font-size: 20px; font-weight: bold;'>{article['title']}</span>", unsafe_allow_html=True)
                         st.write(f"Published on: {article['pub_date']} - {article['source']}")
                     with col2:
                         copy_button_html = f"""
-                        <button onclick="navigator.clipboard.writeText('{clean_title}')">Copy</button>
+                        <button onclick="navigator.clipboard.writeText('{title}')">Copy</button>
                         """
                         st.components.v1.html(copy_button_html, height=35)
                 except Exception as e:
