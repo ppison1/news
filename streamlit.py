@@ -235,7 +235,7 @@ else:
                         st.write(f"Published on: {article['pub_date']} - {article['source']}")
                     with col2:
                         copy_button_html = f"""
-                        <button onclick="navigator.clipboard.writeText('{title}')">Copy</button>
+                        <button onclick="navigator.clipboard.writeText('{title}')">'{article['title']}'</button>
                         """
                         st.components.v1.html(copy_button_html, height=35)
                 except Exception as e:
