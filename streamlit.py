@@ -242,7 +242,7 @@ else:
                       {article['title']}
                     </button>
                     """
-                    st.components.v1.html(copy_button_html)#, height=35)
+                    st.components.v1.html(copy_button_html, height=55)
                     #st.write(f"<span style='color:#1f77b4; font-size: 20px; font-weight: bold;'>{article['title']}</span>", unsafe_allow_html=True)
                     st.write(f"Published on: {article['pub_date']} - {article['source']}")
                     #with col2:
