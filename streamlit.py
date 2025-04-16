@@ -241,7 +241,7 @@ else:
                         {article['title']} 
                     </button>
                     """
-                    hg = len(article['title']) / 1
+                    hg = len(article['title'])
                     st.write(f"Published on: {article['pub_date']} - {article['source']}")
                     st.components.v1.html(copy_button_html, height=hg)
                 except Exception as e:
