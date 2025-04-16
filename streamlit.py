@@ -237,7 +237,7 @@ else:
                     copy_button_html = f"""
                     <button 
                         onclick="navigator.clipboard.writeText('{title}')"
-                        style="font-size:15px; white-space:normal; background-color: transparent; border: none; color: white; cursor: pointer; ">
+                        style="font-size:15px; white-space:normal; background-color: transparent; border: none; color: white; cursor: pointer; display: inline-block; text-align: left; padding: 0; margin: 0; width: auto;">
                         Published on: {article['pub_date']} - {article['source']}
                     </button>
                     """
