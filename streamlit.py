@@ -237,12 +237,13 @@ else:
                     copy_button_html = f"""
                     <button 
                         onclick="navigator.clipboard.writeText('{title}')"
-                        style="width:auto; min-width:60px; padding:5px 10px; font-size:18px; white-space:normal; background-color: transparent; border: none; color: #1f77b4; cursor: pointer; ">
-                        {article['title']} 
+                        style="width:auto; min-width:60px; padding:5px 10px; font-size:18px; white-space:normal; background-color: transparent; border: none; color: white; cursor: pointer; ">
+                        Published on: {article['pub_date']} - {article['source']}
                     </button>
                     """
                     hg = len(article['title'])
-                    st.write(f"Published on: {article['pub_date']} - {article['source']}")
-                    st.components.v1.html(copy_button_html, height=hg)
+                    st.write(f"<span style='color:#1f77b4; font-size: 20px; font-weight: bold;'>{article['title']}</span>", unsafe_allow_html=True)
+                    # st.write(f"Published on: {article['pub_date']} - {article['source']}")
+                    st.components.v1.html(copy_button_html, height=30)
                 except Exception as e:
                     pass
