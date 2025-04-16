@@ -241,7 +241,10 @@ else:
                         {article['title']} 
                     </button>
                     """
-                    st.components.v1.html(copy_button_html, height=100)
+                    hg = 50
+                    if len(article['title']) > 50:
+                        hg = 100
+                    st.components.v1.html(copy_button_html, height=hg)
                     st.write(f"Published on: {article['pub_date']} - {article['source']}")
                 except Exception as e:
                     pass
