@@ -241,7 +241,7 @@ else:
                         {article['title']} 
                     </button>
                     """
-                    st.components.v1.html(copy_button_html, height=50)
+                    st.components.v1.html(copy_button_html, height=60)
                     st.write(f"Published on: {article['pub_date']} - {article['source']}")
                 except Exception as e:
                     pass
