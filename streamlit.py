@@ -228,12 +228,7 @@ else:
 
             for idx, article in enumerate(sorted_articles):
                 try:
-                    # col1, col2 = st.columns([10, 1])
                     title = f"Raccontami in italiano articolo del periodico {article['source']} con titolo: {article['title']} e approfondisci con alte fonti."
-                    # with col1:
-                    #     st.write(f"<span style='color:#1f77b4; font-size: 20px; font-weight: bold;'>{article['title']}</span>", unsafe_allow_html=True)
-                    #     st.write(f"Published on: {article['pub_date']} - {article['source']}")
-                    # with col2:
                     copy_button_html = f"""
                     <button 
                         onclick="navigator.clipboard.writeText('{title}')"
@@ -241,9 +236,7 @@ else:
                         Published on: {article['pub_date']} - {article['source']}
                     </button>
                     """
-                    hg = len(article['title'])
                     st.write(f"<span style='color:#1f77b4; font-size: 20px; font-weight: bold;'>{article['title']}</span>", unsafe_allow_html=True)
-                    # st.write(f"Published on: {article['pub_date']} - {article['source']}")
                     st.components.v1.html(copy_button_html, height=30)
                 except Exception as e:
                     pass
