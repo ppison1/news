@@ -237,7 +237,7 @@ else:
                     copy_button_html = f"""
                     <button 
                         onclick="navigator.clipboard.writeText('{title}')"
-                        style="width:auto; min-width:60px; padding:5px 10px; font-size:20px; white-space:normal; background-color: transparent; border: none; color: #1f77b4; cursor: pointer; ">
+                        style="width:auto; min-width:60px; padding:5px 10px; font-size:18px; white-space:normal; background-color: transparent; border: none; color: #1f77b4; cursor: pointer; ">
                         {article['title']} 
                     </button>
                     """
