@@ -35,13 +35,13 @@ RSS_FEEDS = {
     "Economia": [
                 "https://it.investing.com/rss/news_14.rss", 
                 "https://www.ilsole24ore.com/rss/economia.xml", 
-                "https://feeds.content.dowjones.io/public/rss/socialeconomyfeed", 
-                "https://feeds.content.dowjones.io/public/rss/WSJcomUSBusiness"
+                # "https://feeds.content.dowjones.io/public/rss/socialeconomyfeed", 
+                # "https://feeds.content.dowjones.io/public/rss/WSJcomUSBusiness"
                 ],
     "Finanza": [
                 "https://it.investing.com/rss/news_25.rss", 
                 "https://www.ilsole24ore.com/rss/finanza.xml", 
-                "https://feeds.content.dowjones.io/public/rss/RSSMarketsMain"
+                # "https://feeds.content.dowjones.io/public/rss/RSSMarketsMain"
                 ],
 }
 # RSS_FEEDS["All"] = sum((v for v in RSS_FEEDS.values() if v is not None), [])
@@ -52,7 +52,7 @@ RSS_FEEDS["Motori"] = [
                     "https://it.motorsport.com/rss/f1/news/", 
                     "https://www.moto.it/rss/news-motogp.xml"
                     ]
-RSS_FEEDS["Tecnologia"] = ["https://feeds.content.dowjones.io/public/rss/RSSWSJD"]
+# RSS_FEEDS["Tecnologia"] = ["https://feeds.content.dowjones.io/public/rss/RSSWSJD"]
 RSS_FEEDS["All"] = sum((v for v in RSS_FEEDS.values() if v is not None), [])
 
 
