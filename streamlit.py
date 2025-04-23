@@ -148,7 +148,7 @@ else:
     feed_name = st.sidebar.radio(
         "Select an RSS Feed",
         list(RSS_FEEDS.keys()),
-        index=7,
+        index=len(list(RSS_FEEDS.keys())) - 1,
     )
 
     if feed_name:
