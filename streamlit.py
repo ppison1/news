@@ -113,7 +113,10 @@ def fetch_rss_articles(feed_urls):
                     except:
                         description = ""
                     pub_date = item.find("pubDate").text
-                    pub_date = dateutil.parser.parse(pub_date).astimezone(pytz.timezone('Europe/Rome'))
+                    if source == "Moto.it":
+                        pub_date = dateutil.parser.parse(pub_date)
+                    else:
+                        pub_date = dateutil.parser.parse(pub_date).astimezone(pytz.timezone('Europe/Rome'))
 
                     # Clean up description using BeautifulSoup
                     soup = BeautifulSoup(description, 'html.parser')
