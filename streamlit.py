@@ -163,8 +163,6 @@ else:
             uploaded_file = st.file_uploader("Carica il tuo file CSV", type=["csv"])
             if uploaded_file is not None:
                 df_merged = pd.read_csv(uploaded_file, index_col=0)
-                st.subheader("Tabella degli ultimi 10 record")
-                st.dataframe(df_merged[::-1])
                 fig = make_subplots(
                     rows=2, cols=1,
                     shared_xaxes=True,
@@ -196,6 +194,8 @@ else:
                 )
                 st.subheader("Grafico: Total USD Cumulative & Daily PNL")
                 st.plotly_chart(fig)
+                st.subheader("Tabella dei record")
+                st.dataframe(df_merged[::-1])
         elif feed_name == "Chart":
             st.write("### Charts")
             tv = TvDatafeed()
