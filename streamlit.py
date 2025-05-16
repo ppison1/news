@@ -167,12 +167,12 @@ else:
                     rows=2, cols=1,
                     shared_xaxes=True,
                     vertical_spacing=0.1,
-                    subplot_titles=("Total USD Cumulative", "Bar Chart: Total Realized PNL")
+                    subplot_titles=("TOT$", "Bar Chart: D$")
                 )
                 fig.add_trace(
                     go.Scatter(
-                        x=df_merged['Trade Date'],
-                        y=df_merged['Total USD Cumulative'],
+                        x=df_merged['Date'],
+                        y=df_merged['TOT$'],
                         mode='lines',
                         name='Cumulative PNL'
                     ),
@@ -180,14 +180,14 @@ else:
                 )
                 fig.add_trace(
                     go.Bar(
-                        x=df_merged['Trade Date'],
-                        y=df_merged['Total Realized PNL'],
+                        x=df_merged['Date'],
+                        y=df_merged['D$'],
                         name='Daily PNL',
-                        marker_color=df_merged['Total Realized PNL'].apply(lambda x: 'green' if x > 0 else 'red')
+                        marker_color=df_merged['D$'].apply(lambda x: 'green' if x > 0 else 'red')
                     ),
                     row=2, col=1
                 )
-                fig.update_xaxes(type='category', categoryorder='array', categoryarray=df_merged['Trade Date'], showticklabels=False)
+                fig.update_xaxes(type='category', categoryorder='array', categoryarray=df_merged['Date'], showticklabels=False)
                 fig.update_layout(
                     title_text="Total USD Cumulative & Daily PNL",
                     height=800,
